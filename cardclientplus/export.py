@@ -92,13 +92,14 @@ def export_cards(
                 # If these fields are set in config file, call get_card_detail to get values
                 # If not set, don't slow things down by calling get_card_detail
                 if len(set(EXTENDED_FIELDS).intersection(export_fields)) > 0:
-                    detailed_card_record = card_client.get_card_detail(normalized_card['id'])
-                    enhanced_card['lastnote'] = ''
-                    enhanced_card['lastnoteAt'] = ''
-                    if len(detailed_card_record['notes']) > 0:
-                        lastnote = detailed_card_record['notes'][-1]
-                        enhanced_card['lastnote'] = lastnote['text']
-                        enhanced_card['lastnoteAt'] = lastnote['createdAt']
+                    if (normalized_card['status'] != 'ISSUED'):
+                        detailed_card_record = card_client.get_card_detail(normalized_card['id'])
+                        enhanced_card['lastnote'] = ''
+                        enhanced_card['lastnoteAt'] = ''
+                        if len(detailed_card_record['notes']) > 0:
+                            lastnote = detailed_card_record['notes'][-1]
+                            enhanced_card['lastnote'] = lastnote['text']
+                            enhanced_card['lastnoteAt'] = lastnote['createdAt']
 
                 if not writer:
                     # Lazy-init the dict writer in order to allow us to set the field names
