@@ -425,3 +425,8 @@ By default the following fields are included within the exports of card data:
   of the cardholder which has been used on this card from the University Photo API.
 - `updatedAt` - an ISO 8601 datetime representing when this card was last updated within the
   Card API.
+
+##### Extended fields - Card client 'plus'
+- `lastnote` - last note on card record
+- `lastnoteAt` - date of last note on card record
+
