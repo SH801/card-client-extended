@@ -21,14 +21,14 @@ def load_requirements(file: str):
 
 
 setup(
-    name="cardclient-extended",
+    name="cardclientplus",
     version="1.1.10",
     packages=find_packages(),
     install_requires=load_requirements("requirements.txt"),
     tests_require=load_requirements("requirements-tests.txt"),
     entry_points={
         "console_scripts": [
-            "cardclient-extended=cardclient:main",
+            "cardclientplus=cardclientplus:main",
         ]
     },
 )

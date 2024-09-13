@@ -88,7 +88,7 @@ def export_cards(
 
                 enhanced_card = {**person_information, **normalized_card}
 
-                # cardclient-extended allow two new fields 'lastnote' and 'lastnoteAt'
+                # cardclientplus allow two new fields 'lastnote' and 'lastnoteAt'
                 # If these fields are set in config file, call get_card_detail to get values
                 # If not set, don't slow things down by calling get_card_detail
                 if len(set(EXTENDED_FIELDS).intersection(export_fields)) > 0:

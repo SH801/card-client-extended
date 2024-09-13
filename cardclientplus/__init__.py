@@ -2,10 +2,10 @@
 Card API Client
 
 Usage:
-    cardclient (-h | --help)
-    cardclient export [--config=FILE]... [--quiet] [--debug]
-    cardclient export-issued-cards [--incremental-update] [--config=FILE]... [--quiet] [--debug]
-    cardclient card-detail <identifier> [--config=FILE]... [--identifier-scheme=SCHEME]
+    cardclientplus (-h | --help)
+    cardclientplus export [--config=FILE]... [--quiet] [--debug]
+    cardclientplus export-issued-cards [--incremental-update] [--config=FILE]... [--quiet] [--debug]
+    cardclientplus card-detail <identifier> [--config=FILE]... [--identifier-scheme=SCHEME]
                                         [--normalize] [--quiet] [--debug]
 
 Options:
