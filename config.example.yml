@@ -1,0 +1,98 @@
+environment:
+  # the credentials granted within the API Service to use to access the Card API
+  client_key: client_key
+  client_secret: client_secret
+
+  # The api version and base_url can be optionally specified for each API.
+  # The default version and base_url are the most recent and stable and therefore
+  # should not be specified unless you have a clear reason.
+  card_api:
+    api_version: v1beta1
+    base_url: https://api.apps.cam.ac.uk/card
+  university_student_api:
+    api_version: v1alpha2
+    base_url: https://api.apps.cam.ac.uk/university-student
+  legacy_cardholder_api:
+    base_url: https://api.apps.cam.ac.uk/legacycardholders
+
+  # set the timeout used for the http connect and read operations (this defaults to 10)
+  timeout: 15
+  # set the number of times to retry a failed calls to an API (this defaults to 3)
+  retry_attempts: 2
+
+# Credentials used to query Lookup, only required if being used outside the CUDN
+lookup_credentials:
+  username: username
+  password: password
+
+# Parameters to use to query the Card API - at the moment only status is supported (optional)
+filter:
+  status: ISSUED
+
+# The queries used to determine which cards to fetch from the Card API (required)
+# README.md gives a full list of the supported options here
+queries:
+  # Fetch all cards for people who belong to the UIS institution, and adds an extra field
+  # 'grade' to the output with the value 'S'.
+  - by: lookup_institution
+    id: UIS
+    extra_fields_for_results:
+      grade: S
+  # Fetch all cards for people who belong to the 'uis-devops' group in lookup, add an extra
+  # field 'grade' with value 'X'.
+  - by: lookup_group
+    id: uis-devops
+    extra_fields_for_results:
+      grade: X
+  # Fetch the cards associated with the list of ids (in this case only a single id), add
+  # an extra field 'grade' with value 'Z'.
+  - by: crsid
+    ids:
+      - wgd23
+    extra_fields_for_results:
+      grade: Z
+  # Fetch the cards associated with the student institions in the list of ids (in this case a
+  # single id - ED).
+  - by: student_institution
+    ids:
+      - ED
+  # Fetch the cards associated with the 'ARHA51' academic plans.
+  - by: student_academic_plan
+    ids:
+      - ARHA51
+  # Fetch the cards associated with HR institution 'CHR'
+  - by: university_hr_institution
+    id: CHR
+
+
+# Allows the output of the export to be configured (optional)
+output:
+  # whether duplicates should be removed from the export (defaults to False)
+  deduplicate: False
+  # the location the export should be written to (defaults to export.csv)
+  file: card_export.csv
+  # the fields that should be included in the export (defaults to all available)
+  fields:
+    - visible_name
+    - forenames
+    - surname
+    - crsid
+    # this field is not fetched from Lookup or the Card API, but comes from `extra_fields_for_results`
+    # as specified in the queries above
+    - grade
+    - id
+    - issuedAt
+    - issueNumber
+    - expiresAt
+    - revokedAt
+    - returnedAt
+    - status
+    - cardType
+    - usn
+    - staff_number
+    - bgs_id
+    - legacy_card_holder_id
+    - mifare_id
+    - mifare_id_hex
+    - mifare_number
+    - barcode

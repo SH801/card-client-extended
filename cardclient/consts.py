@@ -1,0 +1,33 @@
+DEFAULT_FIELDS = [
+    "visible_name",
+    "forenames",
+    "surname",
+    "affiliation_status",
+    "issuedAt",
+    "issueNumber",
+    "expiresAt",
+    "crsid",
+    "id",
+    "revokedAt",
+    "returnedAt",
+    "status",
+    "cardType",
+    "usn",
+    "staff_number",
+    "bgs_id",
+    "legacy_card_holder_id",
+    "legacy_card_id",
+    "mifare_id",
+    "mifare_id_hex",
+    "mifare_number",
+    "barcode",
+    "photo_id",
+    "updatedAt",
+    "lastnoteAt",
+    "lastnote",
+]
+
+EXTENDED_FIELDS = [
+    "lastnoteAt",
+    "lastnote",
+]

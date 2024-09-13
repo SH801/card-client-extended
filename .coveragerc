@@ -1,0 +1,7 @@
+[run]
+omit =
+    .tox/*
+    setup.py
+    .venv/*
+    env/*
+    verify_export/*

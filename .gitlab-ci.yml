@@ -1,0 +1,21 @@
+
+include:
+  # Bring in the AutoDevOps template from GitLab.
+  # It can be viewed at:
+  # https://gitlab.com/gitlab-org/gitlab-ee/blob/master/lib/gitlab/ci/templates/Auto-DevOps.gitlab-ci.yml
+  - template: Auto-DevOps.gitlab-ci.yml
+
+  # Overrides to AutoDevOps for testing
+  - project: 'uis/devops/continuous-delivery/ci-templates'
+    file: '/auto-devops/tox-tests.yml'
+  - project: 'uis/devops/continuous-delivery/ci-templates'
+    file: '/auto-devops/pre-commit.yml'
+    ref: v4.5.0
+
+test:
+  variables:
+    TOX_ENVLIST: "py3"
+
+variables:
+  DOCUMENTATION_DISABLED: "1"
+  DAST_DISABLED: "1"
