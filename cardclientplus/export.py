@@ -13,6 +13,7 @@ from .people_client import PeopleClient
 LOG = logging.getLogger(__name__)
 
 import json
+import os.path
 
 def export_cards(
     configuration: Mapping, card_client: CardClient, people_client: PeopleClient, *, silent=False
@@ -45,10 +46,11 @@ def export_cards(
     # Attempt to import existing export file to use as cache in order to reduce 
     # load on server when requesting card details through card_client.get_card_detail
     cacheddata = {}
-    with open(export_location, 'r') as data:
-        for line in DictReader(data):
-            mifare_number = line['mifare_number']
-            cacheddata[mifare_number] = line
+    if os.path.isfile(export_location):
+        with open(export_location, 'r') as data:
+            for line in DictReader(data):
+                mifare_number = line['mifare_number']
+                cacheddata[mifare_number] = line
 
     with open(export_location, "w", newline="", encoding="utf-8") as export_file:
         # Allow lazy-init of dict writer giving us the ability to create the writer
