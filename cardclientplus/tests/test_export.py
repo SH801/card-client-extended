@@ -443,7 +443,7 @@ class TestExportFormatConfigurationOptions(BaseExportTest):
 
 
 class TestExportProgressReporting(BaseExportTest):
-    @patch("cardclient.export.Bar")
+    @patch("cardclientplus.export.Bar")
     def test_export_progress_is_shown(self, mock_progress_bar):
         """
         Basic test to ensure that the progress bar is handled correctly
@@ -479,7 +479,7 @@ class TestExportProgressReporting(BaseExportTest):
         bar_instance.goto.assert_has_calls([call(1), call(1)])
         bar_instance.finish.assert_called_once()
 
-    @patch("cardclient.export.Bar")
+    @patch("cardclientplus.export.Bar")
     def test_progress_bar_ends_without_cards(self, mock_progress_bar):
         """
         Test that even if no cards are returned the progress bar shows as complete
@@ -511,7 +511,7 @@ class TestExportProgressReporting(BaseExportTest):
         bar_instance.goto.assert_has_calls([call(3)])
         bar_instance.finish.assert_called_once()
 
-    @patch("cardclient.export.Bar")
+    @patch("cardclientplus.export.Bar")
     def test_progress_bar_does_not_go_past_max(self, mock_progress_bar):
         """
         Test that if multiple cards are returned for people the progress bar
@@ -557,7 +557,7 @@ class TestExportProgressReporting(BaseExportTest):
         bar_instance.goto.assert_has_calls([call(1), call(1), call(1), call(2)], any_order=False)
         bar_instance.finish.assert_called_once()
 
-    @patch("cardclient.export.Bar")
+    @patch("cardclientplus.export.Bar")
     def test_progress_is_not_shown_if_silent_arg_passed(self, mock_progress_bar):
         """
         Ensure that if `silent` is set no progress is shown

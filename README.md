@@ -71,14 +71,14 @@ pip3 install -e .
 
 The tool offers a three commands:
 
-- `cardclient export` which can be used to export data from the Card API to a csv.
-- `cardclient export-issued-cards` which will generate a csv containing all currently issued cards.
+- `cardclientplus export` which can be used to export data from the Card API to a csv.
+- `cardclientplus export-issued-cards` which will generate a csv containing all currently issued cards.
   - `--incremental-update` can be used to incrementally update an existing export with any changes
     since the previous run.
-- `cardclient card-detail <card_uuid>` which returns a JSON information about the given card by
+- `cardclientplus card-detail <card_uuid>` which returns a JSON information about the given card by
   card uuid (i.e. the `id` field of a card as returned in an export). Additionally,
   `--identifier-scheme` can be provided in order to allow cards to be queried by any
-  identifier referenced by a card. E.g. `cardclient card-detail wgd23 --identifier-scheme crsid`
+  identifier referenced by a card. E.g. `cardclientplus card-detail wgd23 --identifier-scheme crsid`
   would return cards for the CRSid wgd23. Supported identifier schemes are listed below under
   `Individual Identifiers`.
 
@@ -86,7 +86,7 @@ A range of configuration options can be set using yaml configuration files which
 using the `--config` or `-c` flags. Multiple configuration files can be provided if necessary, i.e:
 
 ```bash
-cardclient export -c ./configuration.yaml -c ./lookup-credentials.yaml
+cardclientplus export -c ./configuration.yaml -c ./lookup-credentials.yaml
 ```
 
 If a configuration path is not given `config.yml` is used by default.

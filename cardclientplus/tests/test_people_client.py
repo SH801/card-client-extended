@@ -2,7 +2,7 @@ from unittest import TestCase, mock
 
 from identitylib.identifiers import Identifier, IdentifierSchemes
 
-from cardclient.tests.mocks import (
+from cardclientplus.tests.mocks import (
     MockedLegacyCardholderClient,
     create_people_client_with_ibis_mocked,
 )

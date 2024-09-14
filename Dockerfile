@@ -11,4 +11,4 @@ RUN pip3 install tox && pip3 install -r requirements.txt
 ADD ./ ./
 RUN pip3 install -e .
 
-ENTRYPOINT ["cardclient"]
+ENTRYPOINT ["cardclientplus"]

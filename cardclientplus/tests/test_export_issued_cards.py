@@ -4,13 +4,13 @@ from tempfile import NamedTemporaryFile
 from typing import Dict, List
 from unittest import TestCase, mock
 
-from cardclient.card_client import CardClient
-from cardclient.consts import DEFAULT_FIELDS
-from cardclient.export_issued_cards import (
+from cardclientplus.card_client import CardClient
+from cardclientplus.consts import DEFAULT_FIELDS
+from cardclientplus.export_issued_cards import (
     export_issued_cards,
     update_issued_cards_export,
 )
-from cardclient.identifiers import CRSID_SCHEME
+from cardclientplus.identifiers import CRSID_SCHEME
 
 
 def card_client_with_results(results: List[Dict] = []):
