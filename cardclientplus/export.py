@@ -1,5 +1,5 @@
 import logging
-from csv import DictWriter
+from csv import DictWriter, DictReader
 from json import dumps
 from typing import List, Mapping, Optional
 
@@ -41,6 +41,14 @@ def export_cards(
     # Keep a list of card ids (the unique uuid of a card) in order to deduplicate and
     # to report the number of cards exported
     card_ids_seen: List[str] = []
+
+    # Attempt to import existing export file to use as cache in order to reduce 
+    # load on server when requesting card details through card_client.get_card_detail
+    cacheddata = {}
+    with open(export_location, 'r') as data:
+        for line in DictReader(data):
+            mifare_number = line['mifare_number']
+            cacheddata[mifare_number] = line
 
     with open(export_location, "w", newline="", encoding="utf-8") as export_file:
         # Allow lazy-init of dict writer giving us the ability to create the writer
@@ -89,17 +97,28 @@ def export_cards(
                 enhanced_card = {**person_information, **normalized_card}
 
                 # cardclientplus allow two new fields 'lastnote' and 'lastnoteAt'
-                # If these fields are set in config file, call get_card_detail to get values
-                # If not set, don't slow things down by calling get_card_detail
+                # If these fields are set in config file, check cache from last 
+                # exported file to see if that has data - if cache non-empty and 
+                # card not ISSUED, that will be latest data. If no data from cache, 
+                # call get_card_detail to get values. But if these fields are not 
+                # set in config file, don't slow things down by potentially calling 
+                # get_card_detail
                 if len(set(EXTENDED_FIELDS).intersection(export_fields)) > 0:
-                    if (normalized_card['status'] != 'ISSUED'):
-                        detailed_card_record = card_client.get_card_detail(normalized_card['id'])
-                        enhanced_card['lastnote'] = ''
-                        enhanced_card['lastnoteAt'] = ''
-                        if len(detailed_card_record['notes']) > 0:
-                            lastnote = detailed_card_record['notes'][-1]
-                            enhanced_card['lastnote'] = lastnote['text']
-                            enhanced_card['lastnoteAt'] = lastnote['createdAt']
+                    enhanced_card['lastnote'] = ''
+                    enhanced_card['lastnoteAt'] = ''
+                    if normalized_card['status'] != 'ISSUED':
+                        mifare_number = normalized_card['mifare_number']
+                        if cacheddata.get(mifare_number) is not None:
+                            if cacheddata[mifare_number].get('lastnote') is not None:
+                                enhanced_card['lastnote'] = cacheddata[mifare_number]['lastnote']
+                            if cacheddata[mifare_number].get('lastnoteAt') is not None:
+                                enhanced_card['lastnoteAt'] = cacheddata[mifare_number]['lastnoteAt']
+                        if enhanced_card['lastnote'] == '':
+                            detailed_card_record = card_client.get_card_detail(normalized_card['id'])
+                            if len(detailed_card_record['notes']) > 0:
+                                lastnote = detailed_card_record['notes'][-1]
+                                enhanced_card['lastnote'] = lastnote['text']
+                                enhanced_card['lastnoteAt'] = lastnote['createdAt']
 
                 if not writer:
                     # Lazy-init the dict writer in order to allow us to set the field names
