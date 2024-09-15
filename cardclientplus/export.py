@@ -1,5 +1,6 @@
 import logging
 from csv import DictWriter, DictReader
+import os.path
 from json import dumps
 from typing import List, Mapping, Optional
 
@@ -11,9 +12,6 @@ from .identifiers import id_to_str, identifier_names_to_schemes
 from .people_client import PeopleClient
 
 LOG = logging.getLogger(__name__)
-
-import json
-import os.path
 
 def export_cards(
     configuration: Mapping, card_client: CardClient, people_client: PeopleClient, *, silent=False
@@ -49,8 +47,8 @@ def export_cards(
     if os.path.isfile(export_location):
         with open(export_location, 'r') as data:
             for line in DictReader(data):
-                mifare_number = line['mifare_number']
-                cacheddata[mifare_number] = line
+                if line.get('id') is not None:
+                    cacheddata[line['id']] = line
 
     with open(export_location, "w", newline="", encoding="utf-8") as export_file:
         # Allow lazy-init of dict writer giving us the ability to create the writer
@@ -100,27 +98,28 @@ def export_cards(
 
                 # cardclientplus allow two new fields 'lastnote' and 'lastnoteAt'
                 # If these fields are set in config file, check cache from last 
-                # exported file to see if that has data - if cache non-empty and 
-                # card not ISSUED, that will be latest data. If no data from cache, 
-                # call get_card_detail to get values. But if these fields are not 
-                # set in config file, don't slow things down by potentially calling 
-                # get_card_detail
+                # exported file using updatedAt field to see if we need to call 
+                # get_card_detail to retrieve latest values. If 'lastnote' / 
+                # 'lastnoteAt' fields not set in config file, don't call get_card_detail
                 if len(set(EXTENDED_FIELDS).intersection(export_fields)) > 0:
                     enhanced_card['lastnote'] = ''
                     enhanced_card['lastnoteAt'] = ''
-                    if normalized_card['status'] != 'ISSUED':
-                        mifare_number = normalized_card['mifare_number']
-                        if cacheddata.get(mifare_number) is not None:
-                            if cacheddata[mifare_number].get('lastnote') is not None:
-                                enhanced_card['lastnote'] = cacheddata[mifare_number]['lastnote']
-                            if cacheddata[mifare_number].get('lastnoteAt') is not None:
-                                enhanced_card['lastnoteAt'] = cacheddata[mifare_number]['lastnoteAt']
-                        if enhanced_card['lastnote'] == '':
-                            detailed_card_record = card_client.get_card_detail(normalized_card['id'])
-                            if len(detailed_card_record['notes']) > 0:
-                                lastnote = detailed_card_record['notes'][-1]
-                                enhanced_card['lastnote'] = lastnote['text']
-                                enhanced_card['lastnoteAt'] = lastnote['createdAt']
+                    cardid = normalized_card['id']
+                    cacheUpdatedAt = None
+                    if cacheddata.get(cardid) is not None:
+                        if cacheddata[cardid].get('lastnote') is not None:
+                            enhanced_card['lastnote'] = cacheddata[cardid]['lastnote']
+                        if cacheddata[cardid].get('lastnoteAt') is not None:
+                            enhanced_card['lastnoteAt'] = cacheddata[cardid]['lastnoteAt']
+                        if cacheddata[cardid].get('updatedAt') is not None:
+                            cacheUpdatedAt = cacheddata[cardid]['updatedAt']
+
+                    if enhanced_card['updatedAt'] != cacheUpdatedAt:
+                        detailed_card_record = card_client.get_card_detail(normalized_card['id'])
+                        if len(detailed_card_record['notes']) > 0:
+                            lastnote = detailed_card_record['notes'][-1]
+                            enhanced_card['lastnote'] = lastnote['text']
+                            enhanced_card['lastnoteAt'] = lastnote['createdAt']
 
                 if not writer:
                     # Lazy-init the dict writer in order to allow us to set the field names
