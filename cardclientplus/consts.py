@@ -23,8 +23,6 @@ DEFAULT_FIELDS = [
     "barcode",
     "photo_id",
     "updatedAt",
-    "lastnoteAt",
-    "lastnote",
 ]
 
 EXTENDED_FIELDS = [
